@@ -19,7 +19,7 @@ body{
  #msqExam{
   color:rgb(52, 52, 236);
   font-size:28px;
-  text-shadow: 2px 3px gray;          
+  text-shadow: 2px 2px gray;          
  }
 
 
@@ -129,7 +129,39 @@ body{
   }
 
   #displaybutton{
-      display: block;
       float:center;
-      position: relative;
   }
+
+  @media screen and (max-device-width:1024px) {
+   
+      .Email{
+          margin-top:10%;
+          width: auto;
+          height: auto;
+      }
+
+      form{
+        width: auto;
+        height: auto;
+      }
+
+      #msqExam{
+          font-size:20px;
+          text-shadow: 1px 1px gray;   
+      }
+
+      #nextButton{
+          padding:none;
+          font-size:10px;
+      }
+
+      #submitButton{
+        padding:none;
+        font-size:9px;
+       }
+
+       #submitAnswers{
+        padding:none;
+        font-size:10px;
+       }
+ }
