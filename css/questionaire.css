@@ -1,14 +1,46 @@
-body{
+html {
+    font-weight: lighter;
+    outline: none;
+    font-family: Arial, Helvetica, sans-serif;
+}
+#cover {
+    background-image: url('https://images.unsplash.com/photo-1485470733090-0aae1788d5af?ixlib=rb-1.2.1&w=1000&q=80');
+    background-attachment: fixed;
+    background-size: cover;
+}
+h1 {
+    margin: 0;
+}
+button {
+    font-family: Arial, Helvetica, sans-serif;
+    border-radius: 10px;
+    outline: none;
+    border: none;
+    background-color: rgba(0, 170, 43, 0.5);
+    padding: 10px;
+}
+input {
+    outline: none;
+    transition: .3s;
+}
+#clientName:focus {
+    box-shadow: 3px 5px rgba(99, 99, 99, 0.5);
+}
+/* body{
     background:white;
     font-family: Verdana;
-}
+} */
 
 .Email{
+      outline: none;
+      background-color: rgba(255, 255, 255, 0.5);
+      padding: 10px;
+      border-radius: 5px;
+      box-shadow: 3px 6px rgba(82, 80, 80, 0.5);
       text-align:center;
       margin-top:4%;
-      height: 500px;
-      width: 500px;
-      background:solid whitesmoke;
+      height: 400px;
+      width: 400px;
       border:1px solid grey;
   }
 
@@ -17,8 +49,9 @@ body{
  }
 
  #msqExam{
-  color:rgb(52, 52, 236);
-  font-size:28px;
+
+  color:rgb(66, 66, 66);
+  font-size: 25px;
   text-shadow: 2px 2px gray;          
  }
 
@@ -58,9 +91,11 @@ body{
 
 
   .imgcontainer {
-  text-align: center;
-  margin: 24px 0 12px 0;
-  }
+    background-color: rgba(248, 248, 248, 0.5);
+    text-align: center;
+    margin: 0 0 12px 0;
+    padding: 20px;
+}
 
   img.avatar {
   width:28%;
@@ -88,15 +123,21 @@ body{
       text-align: left;
   }
 
-  form{
+  .answering{
+      background-color: rgba(255, 255, 255, 0.5);
+      box-shadow: 3px 6px rgba(0, 0, 0, 0.5);
+      border-radius: 5px;
+      padding: 30px;
+      padding-bottom: 80px;
       height:70vh;
       width:800px;
       border:1px solid gray;
-      overflow:hidden;
+      overflow:auto;
       position: relative;
   }
 
    #submitButton{
+       transition: .3s;
       background-color: #4CAF50;
       font-size:20px;
       padding:13px 45px;
@@ -117,22 +158,20 @@ body{
       opacity: 0.8;
   }
 
-   #nextButton{
-      background-color: #4CAF50;
-      font-size:20px;
-      border-radius: 10px;
-      padding:13px 18px;
-  } 
-
-  #nextButton:hover{
-      opacity: 0.8;
-  }
-
   #displaybutton{
       float:center;
   }
 
+  #imageSrc {
+      width: auto;
+      height: auto;
+  }
+
   @media screen and (max-device-width:1024px) {
+      #imageSrc {
+          width: 100%;
+          height: auto;
+      }
    
       .Email{
           margin-top:10%;
@@ -140,7 +179,7 @@ body{
           height: auto;
       }
 
-      form{
+      .answering{
         width: auto;
         height: auto;
       }
@@ -149,12 +188,6 @@ body{
           font-size:20px;
           text-shadow: 1px 1px gray;   
       }
-
-      #nextButton{
-          padding:none;
-          font-size:10px;
-      }
-
       #submitButton{
         padding:none;
         font-size:9px;

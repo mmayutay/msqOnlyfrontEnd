@@ -2,6 +2,7 @@ $(document).ready(() => {
     var mydata = JSON.parse(JSON.stringify(array))
     var choice = ""
     var clientName = ""
+    var prevCounter = 0
     var arrayOfAnswers = []
 
     //Email Validator
@@ -16,21 +17,26 @@ $(document).ready(() => {
     }
 
 
+    $("#countdown").hide()
     //This is for the timer
     var minutes = 14;
     var seconds = 59;
+    var sendScore = false;
     function timer() {
         setInterval(() => {
-            if (seconds == 0 && minutes == 0) {
-                alert("Time is up!")
-                $("#countdown").hide()
-            }
             $("#countdown").text("Time Remaining  " + minutes + ":" + seconds)
             seconds--;
-            if (seconds == 0) {
+            if (seconds == -1) {
                 minutes = minutes - 1
                 seconds = 59
+                if (minutes <= 0) {
+                    alert("Time is up!")
+                    sendScore = true
+                    sendingDataToDatabase()
+                    $("#countdown").hide()
+                }
             }
+
         }, 1000)
     }
 
@@ -38,7 +44,7 @@ $(document).ready(() => {
     $("#nextButton").hide()
     $("#submitButton").hide()
     $("#submitAnswers").hide()
-    $("form").hide()
+    $(".answering").hide()
     $.fn.showAnswer = function (index, value) {
         $("#submitButton").show()
         choice = mydata[index].answers[value]
@@ -46,17 +52,23 @@ $(document).ready(() => {
     var numberOfQuestion = 0
     var counter = 0
 
-
+    //for the previous button behavior
 
 
     //This is for showing the questionare
     $("#button").click(() => {
+        $("#prevButton").hide()
+        var img = document.createElement("img")
+        img.setAttribute("id", "imageSrc")
+        document.getElementById("image").appendChild(img)
+        var mydata = JSON.parse(JSON.stringify(array))
+        $("img").hide()
         if (document.getElementById("clientName").value != "") {
-            console.log(ValidateEmail(document.getElementById("clientName").value))
             if (ValidateEmail(document.getElementById("clientName").value)) {
+                $("#countdown").show()
                 $("#submitAnswers").hide()
                 $("#submitButton").hide()
-                $("form").show()
+                $(".answering").show()
                 $("#clientName").hide()
                 $(".Email").hide()
                 $("h1").hide()
@@ -64,7 +76,6 @@ $(document).ready(() => {
                 timer()
                 $("#button").hide()
                 $("#nextButton").show()
-
                 document.getElementById('questions').innerHTML = mydata[numberOfQuestion].question;
                 $("#choices").append("<hr>" + "<ul></ul>");
                 for (var i in mydata[numberOfQuestion].answers) {
@@ -72,8 +83,8 @@ $(document).ready(() => {
                     var li = "<br><br><input id='choice" + counter + "' type='radio' name='choices' onclick=$.fn.showAnswer(" + numberOfQuestion + "," + i + ")>";
                     $("ul").append(li.concat(mydata[numberOfQuestion].answers[i]))
                 }
-            }else{
-                document.getElementById("clientName").value="";
+            } else {
+                document.getElementById("clientName").value = "";
                 alert("You've enter an invalid Email!")
             }
         } else {
@@ -85,47 +96,120 @@ $(document).ready(() => {
 
     //This is for showing the next question
     $("#nextButton").click(() => {
+        $("#prevButton").show()
+        prevCounter += 1
         numberOfQuestion += 1
+        var mydata = JSON.parse(JSON.stringify(array))
         $("ul").hide()
-        document.getElementById('questions').innerHTML = mydata[numberOfQuestion].question
+        if (Array.isArray(mydata[numberOfQuestion].question)) {
+            $("img").show()
+            //for the logical images 
+            document.getElementById("imageSrc").src = mydata[numberOfQuestion].question[0]
+            $("#choices").append("<ul></ul>");
+            for (var i in mydata[numberOfQuestion].answers) {
+                counter += 1
+                var li = "<br><br><input id='choice" + counter + "' type='radio' name='choices' onclick=$.fn.showAnswer(" + numberOfQuestion + "," + i + ")>";
+                $("ul").append(li.concat(mydata[numberOfQuestion].answers[i]))
+            }
+        } else {
+            //for skipping the questions
+            mydata.push(mydata[numberOfQuestion])
+            $("ul").hide()
+            document.getElementById('questions').innerHTML = mydata[numberOfQuestion].question
+            $("#choices").append("<ul></ul>");
+            for (var i in mydata[numberOfQuestion].answers) {
+                counter += 1
+                var li = "<br><br><input id='choice" + counter + "' type='radio' name='choices' onclick=$.fn.showAnswer(" + numberOfQuestion + "," + i + ")>";
+                $("ul").append(li.concat(mydata[numberOfQuestion].answers[i]))
+            }
+        }
+    })
+    //Previous Questions
+    $("#prevButton").click(() => {
+        prevCounter -= 1
+        if (prevCounter == 0) {
+            $("#prevButton").hide()
+        }
+        console.log(numberOfQuestion + " " + prevCounter)
+        $("ul").hide()
+        document.getElementById('questions').innerHTML = mydata[numberOfQuestion - (prevCounter + 1)].question
         $("#choices").append("<ul></ul>");
-        for (var i in mydata[numberOfQuestion].answers) {
+        for (var i in mydata[numberOfQuestion - prevCounter].answers) {
             counter += 1
             var li = "<br><br><input id='choice" + counter + "' type='radio' name='choices' onclick=$.fn.showAnswer(" + numberOfQuestion + "," + i + ")>";
-            $("ul").append(li.concat(mydata[numberOfQuestion].answers[i]))
+            $("ul").append(li.concat(mydata[numberOfQuestion - (prevCounter + 1)].answers[i]))
         }
-        console.log(arrayOfAnswers)
     })
 
 
 
     //Getting all the answers from user
     $("#submitButton").click(() => {
-        $("#submitButton").hide()
-        arrayOfAnswers.push(choice)
-        choice = ""
+        $("#prevButton").show()
         numberOfQuestion += 1
-        $("ul").hide()
         var mydata = JSON.parse(JSON.stringify(array))
-        document.getElementById('questions').innerHTML = mydata[numberOfQuestion].question
-        $("#choices").append("<ul></ul>");
-        for (var i in mydata[numberOfQuestion].answers) {
-            counter += 1
-            var li = "<br><br><input id='choice" + counter + "' type='radio' name='choices' onclick=$.fn.showAnswer(" + numberOfQuestion + "," + i + ")>";
-            $("ul").append(li.concat(mydata[numberOfQuestion].answers[i]))
+        $("ul").hide()
+        if (Array.isArray(mydata[numberOfQuestion].question)) {
+            $("img").show()
+            //for the Logical Images
+            document.getElementById("imageSrc").src = mydata[numberOfQuestion].question[0]
+            $("#questions").hide()
+            $("#choices").append("<ul></ul>");
+            for (var i in mydata[numberOfQuestion].answers) {
+                counter += 1
+                var li = "<br><br><input id='choice" + counter + "' type='radio' name='choices' onclick=$.fn.showAnswer(" + numberOfQuestion + "," + i + ")>";
+                $("ul").append(li.concat(mydata[numberOfQuestion].answers[i]))
+            }
+            mydata.splice(numberOfQuestion, 1)
+        } else {
+            document.getElementById('questions').innerHTML = mydata[numberOfQuestion].question
+            $("#choices").append("<ul></ul>");
+            for (var i in mydata[numberOfQuestion].answers) {
+                counter += 1
+                var li = "<br><br><input id='choice" + counter + "' type='radio' name='choices' onclick=$.fn.showAnswer(" + numberOfQuestion + "," + i + ")>";
+                $("ul").append(li.concat(mydata[numberOfQuestion].answers[i]))
+            }
+            mydata.splice(numberOfQuestion, 1)
         }
+        $("#submitButton").hide()
+        var answerAndQuestion = { question: "", answer: "" }
+        answerAndQuestion.question = mydata[numberOfQuestion]
+        answerAndQuestion.answer = choice
+        arrayOfAnswers.push(answerAndQuestion)
+        choice = ""
         var numbersOfAnswers = arrayOfAnswers.length + 1
         $("#numberToAnswer").text(numbersOfAnswers + " out of 50")
-        if (arrayOfAnswers.length == 50 || (minutes == 0 && seconds == 0) ) {
-            alert("Thank you for answering all the exams!")
+    })
+
+
+    function sendingDataToDatabase() {
+        if (sendScore == true || arrayOfAnswers.length == 50) {
+            $.ajax({
+                type: 'POST',
+                url: 'https://msquestions.herokuapp.com/addAnswers',
+                data: JSON.stringify({ name: clientName, answers: arrayOfAnswers }),
+                success: (data) => {
+                    alert("Thank you for taking the exam, just wait for the result, we will call you about the result of your exam!");
+                    $("p").hide()
+                    $("#nextButton").hide()
+                    $("#submitButton").hide()
+                    $("#button").show()
+                    $("#clientName").show()
+                    $("#submitAnswers").hide()
+                    $("h1").show()
+                },
+                contentType: "application/json",
+                dataType: 'json'
+            })
+            $("#countdown").hide()
+            $("#prevButton").hide()
+            $("#numberToAnswer").hide()
             $("form").hide()
             $("#submitAnswers").show()
             $("#nextButton").hide()
             $(".time").hide()
         }
-    })
-
-
+    }
 
     //Submit answers
     $("#submitAnswers").click(() => {
@@ -141,6 +225,7 @@ $(document).ready(() => {
                 $("#button").show()
                 $("#clientName").show()
                 $("#submitAnswers").hide()
+                $("#prevButton").hide()
                 $("h1").show()
             },
             contentType: "application/json",
