@@ -181,6 +181,7 @@ $(document).ready(() => {
         $("#numberToAnswer").text(numbersOfAnswers + " out of 50")
         if (arrayOfAnswers.length == 50) {
             sendScore = true
+            sendingDataToDatabase()
         }
     })
 
