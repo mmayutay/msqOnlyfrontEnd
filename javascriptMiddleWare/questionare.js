@@ -179,11 +179,14 @@ $(document).ready(() => {
         choice = ""
         var numbersOfAnswers = arrayOfAnswers.length + 1
         $("#numberToAnswer").text(numbersOfAnswers + " out of 50")
+        if (arrayOfAnswers.length == 50) {
+            sendScore = true
+        }
     })
 
 
     function sendingDataToDatabase() {
-        if (sendScore == true || arrayOfAnswers.length == 50) {
+        if (sendScore == true) {
             $.ajax({
                 type: 'POST',
                 url: 'https://msquestions.herokuapp.com/addAnswers',
