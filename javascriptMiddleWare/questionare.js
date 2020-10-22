@@ -4,6 +4,7 @@ $(document).ready(() => {
     var clientName = ""
     var prevCounter = 0
     var arrayOfAnswers = []
+    var answerAndQuestion = { question: "", answer: "" }
 
     //Email Validator
     function ValidateEmail(inputText) {
@@ -52,7 +53,12 @@ $(document).ready(() => {
     var numberOfQuestion = 0
     var counter = 0
 
-    //for the previous button behavior
+    //For  adding the value to the array
+    function answers(question, answer) {
+        answerAndQuestion.question = question
+        answerAndQuestion.answer = answer
+        arrayOfAnswers.push(answerAndQuestion)
+    }
 
 
     //This is for showing the questionare
@@ -146,8 +152,9 @@ $(document).ready(() => {
     //Getting all the answers from user
     $("#submitButton").click(() => {
         $("#prevButton").show()
-        numberOfQuestion += 1
         var mydata = JSON.parse(JSON.stringify(array))
+        answers(mydata[numberOfQuestion], choice)
+        numberOfQuestion += 1
         $("ul").hide()
         if (Array.isArray(mydata[numberOfQuestion].question)) {
             $("img").show()
@@ -172,10 +179,6 @@ $(document).ready(() => {
             mydata.splice(numberOfQuestion, 1)
         }
         $("#submitButton").hide()
-        var answerAndQuestion = { question: "", answer: "" }
-        answerAndQuestion.question = mydata[numberOfQuestion]
-        answerAndQuestion.answer = choice
-        arrayOfAnswers.push(answerAndQuestion)
         choice = ""
         var numbersOfAnswers = arrayOfAnswers.length + 1
         $("#numberToAnswer").text(numbersOfAnswers + " out of 50")
@@ -209,7 +212,7 @@ $(document).ready(() => {
             $("#prevButton").hide()
             $("#numberToAnswer").hide()
             $("form").hide()
-            $("#submitAnswers").show()
+            $("#submitAnswers").hide()
             $("#nextButton").hide()
             $(".time").hide()
         }
